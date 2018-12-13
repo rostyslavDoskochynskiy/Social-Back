@@ -28,12 +28,12 @@ exports.LocalSignin = new LocalStrategy({
         let user = await User.findOne({login});
         if(user) {
             if(user.validPassword(password, user)) {
-                done(null, user)
+                return done(null, user)
             } else {
-                done(null, false)
+                return done(null, false);
             }
-            return done(null, false);
         }
+        return done(null, false);
     } catch (e) {
         return e;
     }

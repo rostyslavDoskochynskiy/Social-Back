@@ -13,6 +13,7 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/:id', async (req, res) => {
+    console.log(req.user);
     try {
         let user = await User.findById(req.params.id);
         res.json(user);

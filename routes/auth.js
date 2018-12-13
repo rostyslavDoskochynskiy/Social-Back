@@ -1,6 +1,6 @@
 let router = require('express').Router();
-let PassportMiddleware = require('../middleware/passport');
-let AuthController = require('../controllers/AuthController');
+let { isLoggedIn } = require('../middleware/passport');
+let { signUp, signIn, logout } = require('../controllers/AuthController');
 let Image = require('../models/Image');
 let User = require('../models/User');
 
@@ -17,8 +17,8 @@ router.get('/principal', async (req, res) => {
     }
 });
 
-router.post('/local/signup', AuthController.signUp);
-router.post('/local/signin', AuthController.signIn);
-router.get('/logout', PassportMiddleware.isLoggedIn, AuthController.logout);
+router.post('/local/signup', signUp);
+router.post('/local/signin', signIn);
+router.get('/logout', isLoggedIn, logout);
 
 module.exports = router;

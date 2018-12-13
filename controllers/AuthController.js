@@ -15,22 +15,21 @@ module.exports = {
     },
     signIn(req, res, next) {
         passport.authenticate('local.signin', (err, user) => {
-            // if (err) {
-            //     return res.status(400).send(err);
-            // }
-            // if (!user) {
-            //     return res.sendStatus(400);
-            // }
-            req.logIn(user, err => {
-                if (err) {
+            if (err) {
+                return res.status(400).send(err);
+            }
+            if (!user) {
+                return res.sendStatus(400);
+            }
+            req.logIn(user, async err => {
+                if (err)
                     return next(err);
-                }
-                return res.status(200).json(req.user);
+                return res.status(200).json({user: req.user, loggedIn: true});
             });
         })(req, res, next);
     },
     logout(req, res) {
         req.logout();
-        res.json({ok: true});
+        res.json({message: 'User is logged out'});
     }
 };
