@@ -1,7 +1,5 @@
 let router = require('express').Router();
-let { isLoggedIn } = require('../middleware/passport');
 let { signUp, signIn, logout } = require('../controllers/AuthController');
-let Image = require('../models/Image');
 let User = require('../models/User');
 
 router.get('/principal', async (req, res) => {
@@ -19,6 +17,6 @@ router.get('/principal', async (req, res) => {
 
 router.post('/local/signup', signUp);
 router.post('/local/signin', signIn);
-router.get('/logout', isLoggedIn, logout);
+router.get('/logout', logout);
 
 module.exports = router;

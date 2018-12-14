@@ -23,16 +23,15 @@ exports.LocalSignin = new LocalStrategy({
     usernameField: 'login',
     passwordField: 'password',
     passReqToCallback: true
-}, async (req, login, password,done) => {
+}, async (req, login, password, done) => {
     try {
         let user = await User.findOne({login});
-        if(user) {
-            if(user.validPassword(password, user)) {
+        if (user)
+            if (user.validPassword(password, user)) {
                 return done(null, user)
             } else {
                 return done(null, false);
             }
-        }
         return done(null, false);
     } catch (e) {
         return e;

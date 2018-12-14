@@ -11,7 +11,6 @@ const cors = require("cors");
 
 require('./config/passport/index');
 
-const passportMiddleware = require("./middleware/passport");
 const index = require('./routes/index');
 const api = require('./routes/api');
 const auth = require('./routes/auth');
@@ -41,7 +40,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use('/api', passportMiddleware.isLoggedIn, api);
+app.use('/api', api);
 app.use('/auth', auth);
 app.use('/', index);
 
