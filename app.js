@@ -9,10 +9,6 @@ const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 const cors = require("cors");
 
-//
-const expHbs = require('express-handlebars');
-//
-
 require('./config/passport/index');
 
 const passportMiddleware = require("./middleware/passport");
@@ -26,13 +22,6 @@ mongoose.Promise = global.Promise;
 mongoose.connect(dbUrl);
 
 const app = express();
-
-//
-const views = path.join(__dirname, 'views');
-app.engine('.hbs', expHbs({defaultLayout: path.join(views, 'layouts', 'main.hbs')}));
-app.set('view engine', '.hbs');
-app.set('views', views);
-//
 
 app.use(cors());
 app.use(express.static(path.join(__dirname, './')));
@@ -51,7 +40,6 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
-
 
 app.use('/api', passportMiddleware.isLoggedIn, api);
 app.use('/auth', auth);
