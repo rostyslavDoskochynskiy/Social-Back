@@ -8,6 +8,8 @@ const MongoStorage = require('connect-mongo')(session);
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 const cors = require("cors");
+const socketio = require('socket.io');
+const http = require('http');
 
 require('./config/passport/index');
 
@@ -40,6 +42,18 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+
+const server = http.createServer(app);
+const io = socketio(server);
+
+io.on('connection', (socket) => {
+    console.log('a user connected', socket.id);
+    socket.emit('welcome', `Welcome to our chat ${socket.id}`);
+    socket.on('disconnect', () => {
+        console.log('a user disconnected');
+    })
+});
+
 app.use('/api', api);
 app.use('/auth', auth);
 app.use('/', index);
@@ -57,4 +71,13 @@ app.use((err, req, res) => {
     res.send(err);
 });
 
-app.listen(port, err => err ? console.log(err) : console.log(`Server is listening port ${port}`));
+server.listen(port, err => err ? console.log(err) : console.log(`Server is listening port ${port}`));
+
+
+
+// client.on('subscribeToTimer', (interval) => {
+//     console.log('client is subscribing to timer with interval ', interval);
+//     setInterval(() => {
+//         client.emit('timer', new Date());
+//     }, interval);
+// });
