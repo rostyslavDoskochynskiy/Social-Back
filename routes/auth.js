@@ -9,7 +9,7 @@ router.get('/principal', async (req, res) => {
         let user = await User.findById(req.user._id);
         user = user.toObject();
         res.json({
-            auth: true,WW
+            auth: true,
             user
         });
     } else {
