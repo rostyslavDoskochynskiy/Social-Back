@@ -1,11 +1,12 @@
-let User = require('../models/User');
-let express = require('express');
+const User = require('../models/User');
+const express = require('express');
 
-let router = express.Router();
+const router = express.Router();
 
 router.get('/', async (req, res) => {
     try {
         let users = await User.find({});
+        users = users.filter(el => el.id !== req.user.id);
         res.json(users);
     } catch (e) {
         e ? res.sendStatus(400) : '';
@@ -13,7 +14,6 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/:id', async (req, res) => {
-    console.log(req.user);
     try {
         let user = await User.findById(req.params.id);
         res.json(user);

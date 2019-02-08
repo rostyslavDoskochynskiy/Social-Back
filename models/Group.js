@@ -1,5 +1,5 @@
 let Account = require('./Account');
-let mongoose = require('mongoose');
+let mongoose = require('../config/connection');
 
 let {Schema} = mongoose;
 

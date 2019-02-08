@@ -1,6 +1,6 @@
 let Account = require('./Account');
 let bcrypt = require('bcrypt-nodejs');
-let mongoose = require('mongoose');
+let mongoose = require('../config/connection');
 
 let {Schema} = mongoose;
 
@@ -12,6 +12,16 @@ let UserSchema = new Schema({
     phone: String,
     email: String,
     about: String,
+    friendsRequest: {
+        type: [{
+            type: Schema.Types.ObjectId,
+            ref: 'friendRequest'
+        }]
+    },
+    appliedFriendRequest: [{
+        type: Schema.Types.ObjectId,
+        ref: 'friendRequest'
+    }],
     relationships: String,
     hobbies: String,
     userReaching: [{
@@ -44,3 +54,5 @@ UserSchema.methods.validPassword = (pass, {password}) => {
 };
 
 module.exports = Account.discriminator('user',UserSchema);
+
+

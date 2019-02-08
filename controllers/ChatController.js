@@ -1,25 +1,51 @@
 let Chat = require('../models/Chat');
+let User = require('../models/User');
 
 module.exports = {
     async getChats(req, res) {
-        let author = req.params.id;
+        let author = req.user._id;
         try {
             let chats = await Chat.find({author});
-            res.json(chats);
+            let chatWith = [];
+            for (const chat of chats) {
+                for (const id of chat.users) {
+                    const user = await User.findById(id);
+                    chatWith.push(user);
+                }
+            }
+            const response = {chats, chatWith};
+            res.json(response);
         } catch (e) {
             res.sendStatus(404).send(e.toString());
         }
     },
     async createChat(req, res) {
-        let currentUser = req.user;
-        let newChat = req.body;
         try {
-            let chat = await new Chat(newChat);
-            chat.users.push(currentUser);
-            chat.save();
+            const currentUser = req.user;
+            const { userId } = req.body;
+            const user = await User.findById(userId);
+            const newChat = {
+                author: currentUser._id,
+                name: `Chat with ${user.name} ${user.surname}`,
+                date: new Date()
+            };
+
+            const allChats = await Chat.find({});
+
+            for (const chat of allChats) {
+                const chatAlreadyExist = chat.users.indexOf(user._id) !== -1;
+                if(chatAlreadyExist) return res.json({message: 'Chat already exist', chat});
+            }
+
+            const chat = await Chat.create(newChat);
+
             currentUser.chats.push(chat);
             currentUser.save();
-            res.json(currentUser);
+            user.chats.push(chat);
+            user.save();
+            chat.users.push(user);
+            chat.save();
+            res.json({ message: 'Chat created', chat});
         } catch (e) {
             res.status(400).send(e.toString());
         }
@@ -28,6 +54,10 @@ module.exports = {
         let chatId = req.params.id;
         try {
             let chat = await Chat.findById(chatId);
+
+            console.log('dasdasdadsasdasd')
+
+
             res.json(chat);
         } catch (e) {
             res.sendStatus(400).send(e.toString());

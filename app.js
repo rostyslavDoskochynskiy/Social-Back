@@ -1,17 +1,17 @@
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
+const mongoose = require('./config/connection');
 const passport = require('passport');
 const session = require('express-session');
 const MongoStorage = require('connect-mongo')(session);
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 const cors = require("cors");
-const socketio = require('socket.io');
 const http = require('http');
 
 require('./config/passport/index');
+const createSocket = require('./bin/socket');
 
 const index = require('./routes/index');
 const api = require('./routes/api');
@@ -26,9 +26,10 @@ const app = express();
 
 app.use(cors());
 app.use(express.static(path.join(__dirname, './')));
-app.use(bodyParser.json());
 app.use(helmet());
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(express.urlencoded({extended: true}));
+app.use(express.json());
+
 app.use(cookieParser());
 app.use(session({
     secret: 'secret',
@@ -44,15 +45,7 @@ app.use(passport.session());
 
 
 const server = http.createServer(app);
-const io = socketio(server);
-
-io.on('connection', (socket) => {
-    console.log('a user connected', socket.id);
-    socket.emit('welcome', `Welcome to our chat ${socket.id}`);
-    socket.on('disconnect', () => {
-        console.log('a user disconnected');
-    })
-});
+createSocket(server);
 
 app.use('/api', api);
 app.use('/auth', auth);
@@ -72,12 +65,3 @@ app.use((err, req, res) => {
 });
 
 server.listen(port, err => err ? console.log(err) : console.log(`Server is listening port ${port}`));
-
-
-
-// client.on('subscribeToTimer', (interval) => {
-//     console.log('client is subscribing to timer with interval ', interval);
-//     setInterval(() => {
-//         client.emit('timer', new Date());
-//     }, interval);
-// });

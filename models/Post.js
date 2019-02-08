@@ -1,4 +1,4 @@
-let mongoose = require('mongoose');
+let mongoose = require('../config/connection');
 let Evaluetable = require('../models/Evaluetable');
 
 let {Schema} = mongoose;

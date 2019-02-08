@@ -4,6 +4,7 @@ const router = require('express').Router({matchParams:true});
 // router.use(////query parser)
 
 router.use('/users', require('./user'));
+router.use('/friend-request', require('./friendsRequest'));
 router.use('/groups', require('./group'));
 router.use('/chats', require('./chat'));
 router.use('/comments', require('./comment'));

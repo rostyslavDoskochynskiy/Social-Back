@@ -1,5 +1,6 @@
 let Message = require('../models/Message');
-
+let User = require('../models/User');
+let mongoose = require('../config/connection');
 module.exports = {
     async getMessages(req, res) {
         let author = req.params.id;
@@ -46,9 +47,13 @@ module.exports = {
     async deleteMessageById(req, res) {
         let messageId = req.params.id;
         try {
-            let message = await Message.findById(messageId);
-            message = await message.remove();
-            res.status(204).json(message);
+            // let message = await Message.findById(messageId);
+            // message = await message.remove();
+
+            const newUser = await User.findOneAndUpdate( {_id: req.user._id}, { $pull: { messages: mongoose.Types.ObjectId('5c2f6ff770a13f326a61b37c')} },{new:true} )
+            // req.user.save();
+            console.log('------------',newUser,'----',req.user._id);
+            res.status(204).json(newUser );
         } catch (e) {
             res.status(400).send(e.toString());
         }
